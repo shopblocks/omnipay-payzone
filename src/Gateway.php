@@ -20,4 +20,9 @@ class Gateway extends AbstractGateway
             'secretKey' => ''
         ];
     }
+
+    public function purchase(array $parameters = [])
+    {
+        return $this->createRequest('\Omnipay\PayZone\Message\PurchaseRequest', $parameters);
+    }
 }
