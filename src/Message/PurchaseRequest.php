@@ -30,12 +30,22 @@ class PurchaseRequest extends AbstractRequest
 
     public function getTransactionType()
     {
-        return $this->getParameter('transactionType');
+        return "SALE"; //$this->getParameter('transactionType');
     }
 
     public function setTransactionType($value)
     {
         return $this->setParameter('transactionType', $value);
+    }
+
+	public function getPassword()
+    {
+        return $this->getParameter('password');
+    }
+
+    public function setPassword($value)
+    {
+        return $this->setParameter('password', $value);
     }
 
     public function getData()
@@ -89,16 +99,44 @@ class PurchaseRequest extends AbstractRequest
 
 		unset($data['PreSharedKey']);
 
+        dd($data);
+
 		return $data;
     }
 
     public function sendData($data)
     {
+        $form = "<form method='post' action='{$this->endpoint}' id='payzone-form'>";
 
+        foreach ($data as $key => $value) {
+            $form .= "<input type='hidden' name='{$key}' value='{$value}'>";
+        }
+
+        $form .= "</form>";
+
+        $form .= "<script>document.getElementById('payzone-form').submit();</script>";
+
+        echo($form);
+        exit;
     }
 
 	private function generateHash($data)
     {
+        $hashString = "";
+        $hashString .= "PreSharedKey=" . ($data['PreSharedKey'] ?? '');
+        $hashString .= "&MerchantID=" . ($data['MerchantID'] ?? '');
+        $hashString .= "&Password=" . ($this->getPassword() ?? '');
+        $hashString .= "&Amount=" . ($data['Amount'] ?? 0);
+        $hashString .= "&CurrencyCode=" . ($data['CurrencyCode'] ?? '');
+        $hashString .= "&OrderID=" . ($data['OrderID'] ?? '');
+        $hashString .= "&TransactionType=" . ($data['TransactionType'] ?? '');
+        $hashString .= "&TransactionDateTime=" . ($data['TransactionDateTime'] ?? '');
+        $hashString .= "&CallbackURL=" . ($data['CallbackURL'] ?? '');
+        $hashString .= "&OrderDescription=" . ($data['Description'] ?? '');
+
+        return sha1($hashString);
+
+        /**
         $hashString = "";
         $hashString .= "PreSharedKey=" . ($data['PreSharedKey'] ?? '');
         $hashString .= "&MerchantID=" . ($data['MerchantID'] ?? '');
@@ -137,5 +175,6 @@ class PurchaseRequest extends AbstractRequest
         $hashString .= "&ServerResultURL=";
         $hashString .= "&PaymentFormDisplaysResult=false";
         return sha1($hashString);
+        **/
     }
 }
