@@ -59,6 +59,11 @@ class PurchaseRequest extends AbstractRequest
         $data['FullAmount'] = $this->getAmountInteger();
         $data['CurrencyCode'] = $this->getCurrencyNumeric();
 
+        $data["EchoAVSCheckResult"] = 'false';
+        $data["EchoCV2CheckResult"] = 'true';
+        $data["EchoThreeDSecureAuthenticationCheckResult"] = 'false';
+        $data["EchoCardType"] = 'false';
+
         $data['OrderID'] = $this->getTransactionId();
         $data['TransactionType'] = $this->getTransactionType();
 
@@ -99,8 +104,6 @@ class PurchaseRequest extends AbstractRequest
 
 		unset($data['PreSharedKey']);
 
-        dd($data);
-
 		return $data;
     }
 
@@ -128,30 +131,18 @@ class PurchaseRequest extends AbstractRequest
         $hashString .= "&Password=" . ($this->getPassword() ?? '');
         $hashString .= "&Amount=" . ($data['Amount'] ?? 0);
         $hashString .= "&CurrencyCode=" . ($data['CurrencyCode'] ?? '');
+
+        $hashString .= "&EchoAVSCheckResult=false";
+        $hashString .= "&EchoCV2CheckResult=true";
+        $hashString .= "&EchoThreeDSecureAuthenticationCheckResult=false";
+        $hashString .= "&EchoCardType=false";
+
         $hashString .= "&OrderID=" . ($data['OrderID'] ?? '');
         $hashString .= "&TransactionType=" . ($data['TransactionType'] ?? '');
         $hashString .= "&TransactionDateTime=" . ($data['TransactionDateTime'] ?? '');
         $hashString .= "&CallbackURL=" . ($data['CallbackURL'] ?? '');
         $hashString .= "&OrderDescription=" . ($data['Description'] ?? '');
 
-        return sha1($hashString);
-
-        /**
-        $hashString = "";
-        $hashString .= "PreSharedKey=" . ($data['PreSharedKey'] ?? '');
-        $hashString .= "&MerchantID=" . ($data['MerchantID'] ?? '');
-        $hashString .= "&Password=" . ($this->getPassword() ?? '');
-        $hashString .= "&Amount=" . ($data['Amount'] ?? 0);
-        $hashString .= "&CurrencyCode=" . ($data['CurrencyCode'] ?? '');
-        $hashString .= "&EchoAVSCheckResult=false";
-        $hashString .= "&EchoCV2CheckResult=true";
-        $hashString .= "&EchoThreeDSecureAuthenticationCheckResult=false";
-        $hashString .= "&EchoCardType=false";
-        $hashString .= "&OrderID=" . ($data['OrderID'] ?? '');
-        $hashString .= "&TransactionType=" . ($data['TransactionType'] ?? 'SALE');
-        $hashString .= "&TransactionDateTime=" . ($data['TransactionDateTime'] ?? '');
-        $hashString .= "&CallbackURL=" . ($data['CallbackURL'] ?? '');
-        $hashString .= "&OrderDescription=" . ($data['OrderDescription'] ?? '');
         $hashString .= "&CustomerName=" . ($data['CustomerName'] ?? '');
         $hashString .= "&Address1=" . ($data['Address1'] ?? '');
         $hashString .= "&Address2=" . ($data['Address2'] ?? '');
@@ -161,10 +152,12 @@ class PurchaseRequest extends AbstractRequest
         $hashString .= "&State=" . ($data['State'] ?? '');
         $hashString .= "&PostCode=" . ($data['PostCode'] ?? '');
         $hashString .= "&CountryCode=" . ($data['CountryCode'] ?? '');
+
         $hashString .= "&EmailAddress=";
         $hashString .= "&PhoneNumber=";
         $hashString .= "&EmailAddressEditable=false";
         $hashString .= "&PhoneNumberEditable=false";
+
         $hashString .= "&CV2Mandatory=true";
         $hashString .= "&Address1Mandatory=false";
         $hashString .= "&CityMandatory=false";
@@ -172,9 +165,10 @@ class PurchaseRequest extends AbstractRequest
         $hashString .= "&StateMandatory=false";
         $hashString .= "&CountryMandatory=false";
         $hashString .= "&ResultDeliveryMethod=POST";
+
         $hashString .= "&ServerResultURL=";
         $hashString .= "&PaymentFormDisplaysResult=false";
+
         return sha1($hashString);
-        **/
     }
 }

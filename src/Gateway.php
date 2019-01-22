@@ -15,7 +15,7 @@ class Gateway extends AbstractGateway
     {
         return [
             'merchantId' => '',
-            'merchantPassword' => '',
+            'password' => '',
             'preSharedKey' => '',
             'secretKey' => ''
         ];
