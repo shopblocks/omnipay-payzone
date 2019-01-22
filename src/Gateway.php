@@ -18,7 +18,6 @@ class Gateway extends AbstractGateway
             'merchantId' => '',
             'password' => '',
             'preSharedKey' => '',
-            'secretKey' => ''
         ];
     }
 
