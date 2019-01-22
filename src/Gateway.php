@@ -64,4 +64,9 @@ class Gateway extends AbstractGateway
 
         return new DummyCompletePurchase($this->httpClient, $this->httpRequest, $parameters);
     }
+
+    public function refund(array $parameters = [])
+    {
+        return $this->createRequest('\Omnipay\PayZone\Message\RefundRequest', $parameters);
+    }
 }

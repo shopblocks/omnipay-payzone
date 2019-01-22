@@ -2,11 +2,14 @@
 
 namespace Omnipay\PayZone\Message;
 
+use DOMDocument;
+use SimpleXMLElement;
 use Omnipay\Common\Message\AbstractRequest;
 
 class PurchaseRequest extends AbstractRequest
 {
-    private $endpoint = "https://mms.payzoneonlinepayments.com/Pages/PublicPages/PaymentForm.aspx";
+    protected $endpoint = "https://gw1.payzoneonlinepayments.com:4430";
+    protected $namespace = 'https://www.thepaymentgateway.net/';
 
     public function getMerchantId()
     {
@@ -46,6 +49,16 @@ class PurchaseRequest extends AbstractRequest
     public function setPassword($value)
     {
         return $this->setParameter('password', $value);
+    }
+
+    public function getOrderId()
+    {
+        return $this->getParameter('OrderId');
+    }
+
+    public function setOrderId($value)
+    {
+        return $this->setParameter('OrderId', $value);
     }
 
     public function getData()
@@ -109,18 +122,42 @@ class PurchaseRequest extends AbstractRequest
 
     public function sendData($data)
     {
-        $form = "<form method='post' action='{$this->endpoint}' id='payzone-form'>";
+        if (is_array($data)) {
+            $this->endpoint = "https://mms.payzoneonlinepayments.com/Pages/PublicPages/PaymentForm.aspx";
 
-        foreach ($data as $key => $value) {
-            $form .= "<input type='hidden' name='{$key}' value='{$value}'>";
+            $form = "<form method='post' action='{$this->endpoint}' id='payzone-form'>";
+
+            foreach ($data as $key => $value) {
+                $form .= "<input type='hidden' name='{$key}' value='{$value}'>";
+            }
+
+            $form .= "</form>";
+
+            $form .= "<script>document.getElementById('payzone-form').submit();</script>";
+
+            echo($form);
+            exit;
         }
+        
+        // the PHP SOAP library sucks, and SimpleXML can't append element trees
+        // TODO: find PSR-0 SOAP library
+        $document = new DOMDocument('1.0', 'utf-8');
+        $envelope = $document->appendChild(
+            $document->createElementNS('http://schemas.xmlsoap.org/soap/envelope/', 'soap:Envelope')
+        );
+        $envelope->setAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+        $envelope->setAttribute('xmlns:xsd', 'http://www.w3.org/2001/XMLSchema');
+        $body = $envelope->appendChild($document->createElement('soap:Body'));
+        $body->appendChild($document->importNode(dom_import_simplexml($data), true));
 
-        $form .= "</form>";
+        // post to Cardsave
+        $headers = array(
+            'Content-Type' => 'text/xml; charset=utf-8',
+            'SOAPAction' => $this->namespace.$data->getName());
 
-        $form .= "<script>document.getElementById('payzone-form').submit();</script>";
+        $httpResponse = $this->httpClient->post($this->endpoint, $headers, $document->saveXML())->send();
 
-        echo($form);
-        exit;
+        return $this->response = new Response($this, $httpResponse->getBody());
     }
 
 	private function generateHash($data)
