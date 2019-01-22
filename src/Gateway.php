@@ -3,6 +3,7 @@
 namespace Omnipay\PayZone;
 
 use Omnipay\Common\AbstractGateway;
+use Omnipay\PayZone\Message\DummyCompletePurchase;
 
 class Gateway extends AbstractGateway
 {
@@ -54,5 +55,14 @@ class Gateway extends AbstractGateway
     public function purchase(array $parameters = [])
     {
         return $this->createRequest('\Omnipay\PayZone\Message\PurchaseRequest', $parameters);
+    }
+
+    public function completePurchase(array $parameters = [])
+    {
+        $parameters['PreSharedKey'] = $this->getPreSharedKey();
+        $parameters['Password'] = $this->getPassword();
+        $parameters['MerchantID'] = $this->getMerchantId();
+
+        return new DummyCompletePurchase($this->httpClient, $this->httpRequest, $parameters);
     }
 }
