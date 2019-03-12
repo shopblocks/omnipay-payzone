@@ -29,7 +29,7 @@ class DummyResponse extends AbstractResponse
 
     public function getData()
     {
-        return $this->form;
+        return $this->data;
     }
 
     public function getForm()
