@@ -45,6 +45,11 @@ class DummyCompletePurchase
         throw new \Exception("Not supported");
     }
 
+    public function getData()
+    {
+        return $this->data;
+    }
+
     private function validHash()
     {
         return $this->data['HashDigest'] === $this->generateHashCheck();

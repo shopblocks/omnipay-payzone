@@ -5,6 +5,7 @@ namespace Omnipay\PayZone\Message;
 use DOMDocument;
 use SimpleXMLElement;
 use Omnipay\Common\Message\AbstractRequest;
+use Omnipay\PayZone\Message\DummyResponse;
 
 class PurchaseRequest extends AbstractRequest
 {
@@ -59,6 +60,16 @@ class PurchaseRequest extends AbstractRequest
     public function setOrderId($value)
     {
         return $this->setParameter('OrderId', $value);
+    }
+
+    public function getReturnForm()
+    {
+        return $this->getParameter('returnForm');
+    }
+
+    public function setReturnForm($value)
+    {
+        return $this->setParameter('returnForm', $value);
     }
 
     public function getData()
@@ -126,14 +137,21 @@ class PurchaseRequest extends AbstractRequest
             $this->endpoint = "https://mms.payzoneonlinepayments.com/Pages/PublicPages/PaymentForm.aspx";
 
             $form = "<form method='post' action='{$this->endpoint}' id='payzone-form'>";
+            $response = [];
 
+            $response['endpoint'] = $this->endpoint;
             foreach ($data as $key => $value) {
                 $form .= "<input type='hidden' name='{$key}' value='{$value}'>";
+                $response[$key] = $value;
             }
 
             $form .= "</form>";
 
             $form .= "<script>document.getElementById('payzone-form').submit();</script>";
+
+            if ($this->getReturnForm()) {
+                return new DummyResponse($response);
+            }
 
             echo($form);
             exit;
