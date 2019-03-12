@@ -34,8 +34,8 @@ class DummyResponse extends AbstractResponse
 
     public function getForm()
     {
-        $form = "<form method='post' action='{$this->form['endpoint']}' id='cardsave-form'>";
-        foreach ($this->form as $key => $value) {
+        $form = "<form method='post' action='{$this->data['endpoint']}' id='cardsave-form'>";
+        foreach ($this->data as $key => $value) {
             if ($key == "endpoint") {
                 continue;
             }
