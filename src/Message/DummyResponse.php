@@ -6,9 +6,13 @@ use Omnipay\Common\Message\AbstractResponse;
 
 class DummyResponse extends AbstractResponse
 {
+    private $form;
+
     public function __construct($data)
     {
         $this->data = $data;
+
+        $this->form = $this->getForm();
 
         return $this;
     }
@@ -34,7 +38,7 @@ class DummyResponse extends AbstractResponse
 
     public function getForm()
     {
-        $form = "<form method='post' action='{$this->data['endpoint']}' id='cardsave-form'>";
+        $form = "<form method='post' action='{$this->data['endpoint']}' id='payzone-form'>";
         foreach ($this->data as $key => $value) {
             if ($key == "endpoint") {
                 continue;
@@ -43,7 +47,7 @@ class DummyResponse extends AbstractResponse
             $form .= "<input type='hidden' name='{$key}' value='{$value}'>";
         }
         $form .= "</form>";
-        $form .= "<script>document.getElementById('cardsave-form').submit();</script>";
+        $form .= "<script>document.getElementById('payzone-form').submit();</script>";
 
         return $form;
     }
