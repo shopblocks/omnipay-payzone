@@ -8,7 +8,7 @@ use Omnipay\Common\Message\AbstractRequest;
 
 class PurchaseRequest extends AbstractRequest
 {
-    protected $endpoint = "https://gw1.payzoneonlinepayments.com:4430";
+    protected $endpoint = "https://gw1.tponlinepayments2.com:4430";
     protected $namespace = 'https://www.thepaymentgateway.net/';
 
     public function getMerchantId()
@@ -123,7 +123,7 @@ class PurchaseRequest extends AbstractRequest
     public function sendData($data)
     {
         if (is_array($data)) {
-            $this->endpoint = "https://mms.payzoneonlinepayments.com/Pages/PublicPages/PaymentForm.aspx";
+            $this->endpoint = "https://mms.tponlinepayments2.com/Pages/PublicPages/PaymentForm.aspx";
 
             $form = "<form method='post' action='{$this->endpoint}' id='payzone-form'>";
 
